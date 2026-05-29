@@ -2,6 +2,13 @@
 from pydantic import Field
 from typing import List
 
+def get_cors_origins() -> List[str]:
+    return [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://192.168.0.120:5173",
+    ]
+
 class Settings(BaseSettings):
     """应用配置"""
     
@@ -23,8 +30,7 @@ class Settings(BaseSettings):
     REDIS_DB: int = 0
     
     # 跨域配置
-    CORS_ORIGINS: List[str] = Field(default_factory=lambda: ["http://localhost:5173"])
-    
+    CORS_ORIGINS: List[str] = Field(default_factory=get_cors_origins)
     class Config:
         env_file = ".env"  # ✅ 拼写正确
         env_file_encoding = "utf-8"
