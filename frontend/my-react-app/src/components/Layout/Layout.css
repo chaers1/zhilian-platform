@@ -1,0 +1,122 @@
+/* Layout.css */
+
+/* 基础布局容器 */
+.Layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+}
+
+/* 主要内容区域 - 自适应 */
+.Layout-content {
+  flex: 1;
+  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 侧边栏关闭时 */
+.Layout-content.sidebar-collapsed {
+  width: 100%;
+}
+
+/* 页脚 - 不再固定定位，而是跟随内容 */
+.Layout-footer {
+  background: linear-gradient(135deg, #1a1f3a 0%, #252a4a 100%);
+  color: #a0b8cc;
+  padding: 8px 0;
+  border-top: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+/* 页脚内容容器 */
+.footer-content {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* 版权信息 */
+.footer-copyright {
+  color: #a0b8cc;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 分隔符 */
+.footer-divider {
+  color: #4a5f73;
+  margin: 0 2px;
+}
+
+.footer-links a {
+  color: #a5b4fc;
+  text-decoration: none;
+  font-size: 11px;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #c7d2fe;
+}
+
+/* 品牌标识/徽章 */
+.footer-badge {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.badge-item {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  color: #94a3b8;
+  padding: 2px 8px;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.badge-item i {
+  font-style: normal;
+  color: #818cf8;
+  font-weight: bold;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .Layout-content {
+    padding: 16px;
+  }
+
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .footer-copyright {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .footer-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .footer-badge {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,190 @@
+/**
+ * RegisterForm 组件样式
+ * 注册表单组件
+ */
+
+.RegisterForm {
+  display: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.RegisterForm-active {
+  display: block;
+  visibility: visible;
+  opacity: 1;
+}
+
+.RegisterForm:not(.RegisterForm-active) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.RegisterForm-header {
+  margin-bottom: 24px;
+}
+
+.RegisterForm-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 8px;
+}
+
+.RegisterForm-header p {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.RegisterForm-header a {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.RegisterForm-header a:hover {
+  text-decoration: underline;
+}
+
+/* 输入框组 */
+.RegisterForm-input-group {
+  margin-bottom: 16px;
+}
+
+.RegisterForm-input-group label {
+  display: block;
+  color: #cbd5e1;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.RegisterForm-input-group input {
+  width: 100%;
+  background: #1e2a3a;
+  border: 1px solid #2d3a4a;
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 14px;
+  color: white;
+  font-family: "Inter", sans-serif;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.RegisterForm-input-group input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: #253141;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+.RegisterForm-input-group input::placeholder {
+  color: #55657a;
+}
+
+/* 双列布局 */
+.RegisterForm-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* 服务条款 */
+.RegisterForm-terms {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #94a3b8;
+  font-size: 13px;
+  margin: 16px 0;
+}
+
+.RegisterForm-terms input {
+  width: 16px;
+  height: 16px;
+  accent-color: #3b82f6;
+}
+
+.RegisterForm-terms a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+.RegisterForm-terms a:hover {
+  text-decoration: underline;
+}
+
+/* 按钮样式 */
+.RegisterForm-btn-primary {
+  width: 100%;
+  background: linear-gradient(145deg, #2563eb, #4f46e5);
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+  box-shadow: 0 8px 20px -5px rgba(37, 99, 235, 0.3);
+  margin-bottom: 12px;
+  box-sizing: border-box;
+}
+
+.RegisterForm-btn-primary:hover {
+  background: linear-gradient(145deg, #1d4ed8, #4338ca);
+  transform: scale(1.01);
+  box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.5);
+}
+
+.RegisterForm-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.RegisterForm-btn-secondary {
+  width: 100%;
+  background: transparent;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  padding: 14px;
+  color: #94a3b8;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.RegisterForm-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  border-color: #4b5565;
+}
+
+.RegisterForm-btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 响应式设计 */
+@media (max-width: 900px) {
+  .RegisterForm-row {
+    grid-template-columns: 1fr;
+  }
+}

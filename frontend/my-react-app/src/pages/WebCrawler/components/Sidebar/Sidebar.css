@@ -1,0 +1,242 @@
+/*
+.sidebar.css 侧边栏组件样式
+*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.sidebar {
+  width: 280px;
+  background: rgba(15, 20, 45, 0.95);
+  backdrop-filter: blur(10px);
+  border-right: 1px solid rgba(102, 126, 234, 0.2);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 100;
+}
+
+.sidebar-header {
+  padding: 25px 20px;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.logo-text {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.logo-text h2 {
+  font-size: 18px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-clip: border-box;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.logo-text p {
+  font-size: 13px;
+  opacity: 1;
+  color: #818cf8;
+}
+
+.spider-list-container {
+  flex: 1;
+  overflow: auto;
+  padding: 15px 0;
+}
+
+.list_title {
+  padding: 0 20px 10px 20px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #667eea;
+  font-weight: 600;
+}
+
+.spider-item {
+  margin: 5px 12px;
+  padding: 12px 15px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(102, 126, 234, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 悬停效果 */
+.spider-item:hover {
+  background: rgba(102, 126, 234, 0.15);
+  border-color: rgba(102, 126, 234, 0.3);
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+/* 点击效果 - 按下时 */
+.spider-item:active {
+  transform: translateX(2px) scale(0.98);
+  background: rgba(102, 126, 234, 0.25);
+}
+
+/* 选中状态样式 */
+.spider-item-active {
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.3) 0%,
+    rgba(118, 75, 162, 0.3) 100%
+  );
+  border-color: rgba(102, 126, 234, 0.5);
+  box-shadow:
+    0 4px 16px rgba(102, 126, 234, 0.3),
+    inset 0 0 20px rgba(102, 126, 234, 0.1);
+}
+
+.spider-item-active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+  border-radius: 0 4px 4px 0;
+}
+
+.spider-item-active .spider-name span {
+  color: white;
+}
+
+.spider-name {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* 状态指示圆点 */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* 状态标签 */
+.status-tag {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.sidebar-footer {
+  padding: 15px;
+  border-top: 1px solid rgba(102, 126, 234, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+}
+
+.user-role {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* 运行中 - 绿色 */
+.status-dot.running {
+  background: #22c55e;
+}
+
+.status-tag.running {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+/* 空闲 - 黄色 */
+.status-dot.idle {
+  background: #f59e0b;
+}
+
+.status-tag.idle {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+
+/* 已停止 - 红色 */
+.status-dot.stopped {
+  background: #ef4444;
+}
+
+.status-tag.stopped {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
