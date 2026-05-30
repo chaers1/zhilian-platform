@@ -4,14 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e37ccaf5-9892-4e73-a837-6460e7665094" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../django_react/.idea/django_react.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../django_react/.idea/django_react.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../django_react/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../django_react/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../django_react/apps/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/../django_react/apps/users/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../django_react/media/avatars/avatar_11_ac36c923.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../docs/智联平台综页面文档/.obsidian/workspace.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../docs/智联平台综页面文档/.obsidian/workspace.json" afterDir="false" />
-    </list>
+    <list default="true" id="e37ccaf5-9892-4e73-a837-6460e7665094" name="更改" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -96,7 +89,7 @@
       <workItem from="1779959231566" duration="4500000" />
       <workItem from="1780055671432" duration="3260000" />
       <workItem from="1780123710739" duration="1466000" />
-      <workItem from="1780125951678" duration="623000" />
+      <workItem from="1780125951678" duration="1001000" />
     </task>
     <servers />
   </component>
