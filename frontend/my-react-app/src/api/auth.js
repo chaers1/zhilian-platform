@@ -206,6 +206,9 @@ export const getUserInfo = async () => {
  */
 export const updateProfile = async (data) => {
     try {
+        console.log('updateProfile 接收到的数据:', data)
+        console.log('avatar 文件:', data.avatar)
+
         const formData = new FormData()
         formData.append('name', data.name || '')
         formData.append('department', data.department || '')
@@ -214,6 +217,12 @@ export const updateProfile = async (data) => {
         formData.append('bio', data.bio || '')
         if (data.avatar) {
             formData.append('avatar', data.avatar)
+            console.log('已添加 avatar 到 FormData')
+        }
+
+        console.log('FormData 内容:')
+        for (let pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1])
         }
 
         const res = await djangoRequest.post('api/users/profile', formData)

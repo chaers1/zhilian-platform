@@ -4,6 +4,7 @@
  * @returns {JSX.Element} 侧边栏组件
  */
 import { useState } from 'react';
+import { getFullAvatarUrl } from '../../../../config/backend';
 import './Sidebar.css';
 import '@fortawesome/fontawesome-free/css/all.min.css'
 
@@ -106,7 +107,7 @@ const Sidebar = ({ activeItem, onItemClick, isOpen = true, user, spiderStatus })
                 <div className='user-avatar'>
                     {user?.avatar_url && user.avatar_url !== null && user.avatar_url !== '' ? (
                         <img
-                            src={user.avatar_url.startsWith('/') ? `http://127.0.0.1:8000${user.avatar_url}` : user.avatar_url}
+                            src={getFullAvatarUrl(user.avatar_url)}
                             alt={user.name}
                             className='avatar-img'
                             onError={(e) => {

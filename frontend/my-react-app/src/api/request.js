@@ -8,20 +8,30 @@
  * - FastAPI (8001端口): 数据统计、图表查询、实时数据
  */
 
- import axios from 'axios'
-  
+import axios from 'axios'
+
 //==================== 后端服务地址配置 ====================
+/**
+ * 从环境变量读取后端配置
+ * VITE_ 前缀是 Vite 的约定，用于暴露环境变量给前端代码
+ */
+const getBackendUrl = (host, port) => {
+    const envHost = import.meta.env[`VITE_${host}`] || '127.0.0.1'
+    const envPort = import.meta.env[`VITE_${port}`] || '8000'
+    return `http://${envHost}:${envPort}/`
+}
+
 /**
  * Django 后端基础URL
  * 负责：用户认证（登录/注册）、爬虫操作（启动/停止）、权限管理
  */
-const DJANGO_BASE_URL = 'http://127.0.0.1:8000/'
+const DJANGO_BASE_URL = getBackendUrl('DJANGO_HOST', 'DJANGO_PORT')
 
 /**
  * FastAPI 后端基础URL
  * 负责：Dashboard 统计数据、图表数据查询、实时数据流
  */
-const FASTAPI_BASE_URL = 'http://127.0.0.1:8001/'
+const FASTAPI_BASE_URL = getBackendUrl('FASTAPI_HOST', 'FASTAPI_PORT')
 
 // ==================== 请求实例创建 ====================
 
@@ -83,6 +93,12 @@ const injectToken = (config) => {
     if (token) {
         config.headers['Authorization'] = `Bearer ${token}`
     }
+
+    // 如果是 FormData，删除 Content-Type，让 axios 自动设置 multipart/form-data
+    if (config.data instanceof FormData) {
+        delete config.headers['Content-Type']
+    }
+
     return config
 }
 
@@ -106,7 +122,7 @@ const handleError = (error) => {
     // 检查是否有响应（服务器返回了状态码）
     if (error.response) {
         const { status } = error.response
-        
+
         switch (status) {
             // 401: 未授权（token过期或无效）
             case 401:
@@ -119,37 +135,37 @@ const handleError = (error) => {
                 // 跳转到登录页
                 window.location.href = '/'
                 break
-            
+
             // 403: 禁止访问（没有权限）
             case 403:
                 alert('抱歉，您没有权限执行此操作')
                 break
-            
+
             // 404: 资源不存在
             case 404:
                 console.warn('[Request Error] 请求的资源不存在')
                 break
-            
+
             // 500: 服务器内部错误
             case 500:
                 alert('服务器内部错误，请稍后重试')
                 break
-            
+
             // 其他错误
             default:
                 const message = error.response.data?.message || '请求失败'
                 alert(`请求失败：${message}`)
         }
-    } 
+    }
     // 请求已发出但没有收到响应（网络问题）
     else if (error.request) {
         alert('网络连接失败，请检查网络连接')
-    } 
+    }
     // 请求配置错误
     else {
         console.error('[Request Error] 请求配置错误:', error.message)
     }
-    
+
     // 将错误传递给调用方处理
     return Promise.reject(error)
 }

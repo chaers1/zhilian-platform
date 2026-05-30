@@ -10,6 +10,7 @@
  */
 
 import { useState, useMemo, memo, useEffect } from 'react';
+import { getFullAvatarUrl } from '../../../../config/backend';
 import './ProfilePage.css';
 
 const ProfilePage = ({ user, isActive, onSave, onBack }) => {
@@ -26,6 +27,15 @@ const ProfilePage = ({ user, isActive, onSave, onBack }) => {
 
     const [avatarPreview, setAvatarPreview] = useState(null);
 
+    // 调试日志：追踪 avatar 状态变化
+    useEffect(() => {
+        console.log('ProfilePage avatar 状态变化:', {
+            avatar,
+            isActive,
+            userId: user?.id
+        });
+    }, [avatar, isActive, user]);
+
     // 当 user 数据从后端获取后，同步更新 formData
     useEffect(() => {
         if (user) {
@@ -36,8 +46,7 @@ const ProfilePage = ({ user, isActive, onSave, onBack }) => {
                 phone: user.phone || '',
                 bio: user.bio || ''
             });
-            // 不设置avatarPreview，让头像显示逻辑直接从user对象中获取
-            setAvatar(null);
+            // 不再重置 avatar，保留用户选择的头像文件
         } else {
             // 用户退出登录时，重置所有状态
             setFormData({
@@ -51,6 +60,14 @@ const ProfilePage = ({ user, isActive, onSave, onBack }) => {
             setAvatarPreview(null);
         }
     }, [user]);
+
+    // 当页面从激活状态变为非激活状态时，清空头像预览
+    useEffect(() => {
+        if (!isActive) {
+            setAvatar(null);
+            setAvatarPreview(null);
+        }
+    }, [isActive]);
     /**
      * 处理输入框变化
      * @param {Object} event - 事件对象
@@ -67,6 +84,9 @@ const ProfilePage = ({ user, isActive, onSave, onBack }) => {
      * 处理保存修改
      */
     const handleSave = () => {
+        console.log('handleSave 被调用，avatar:', avatar);
+        console.log('handleSave 中的 formData:', formData);
+
         if (!formData.name) {
             alert('请填写姓名');
             return;
@@ -81,6 +101,7 @@ const ProfilePage = ({ user, isActive, onSave, onBack }) => {
         }
 
         if (onSave) {
+            console.log('调用 onSave，传递的数据:', { ...formData, avatar });
             onSave({
                 ...formData,
                 avatar
@@ -143,7 +164,7 @@ const ProfilePage = ({ user, isActive, onSave, onBack }) => {
                             />
                         ) : (user?.avatar_url && user.avatar_url !== null && user.avatar_url !== 'none' && user.avatar_url !== '') ? (
                             <img
-                                src={user.avatar_url.startsWith('/') ? `http://127.0.0.1:8000${user.avatar_url}` : user.avatar_url}
+                                src={getFullAvatarUrl(user.avatar_url)}
                                 alt="用户头像"
                             />
                         ) : (

@@ -17,6 +17,7 @@
  */
 
 import { useState, useEffect, useRef, memo } from 'react';
+import { getFullAvatarUrl } from '../../../../config/backend';
 import './UserComponent.css';
 
 const UserComponent = ({
@@ -130,7 +131,7 @@ const UserComponent = ({
             >
                 <div className="UserComponent-avatar">
                     {user?.avatar_url && user.avatar_url !== null && user.avatar_url !== 'none' && user.avatar_url !== '' ? (
-                        <img src={user.avatar_url.startsWith('/') ? `http://127.0.0.1:8000${user.avatar_url}` : user.avatar_url} alt="用户头像" style={{
+                        <img src={getFullAvatarUrl(user.avatar_url)} alt="用户头像" style={{
                             width: '100%', height: '100%',
                             objectFit: 'cover', borderRadius: '50%'
                         }} />

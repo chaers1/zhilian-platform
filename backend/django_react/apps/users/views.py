@@ -215,7 +215,8 @@ class UserProfileView(APIViewBase):
 
         try:
             user = await User.objects.aget(id=user_id)
-            avatar_url = f"{settings.MEDIA_URL}{user.avatar}" if user.avatar else ''
+            avatar_path = user.avatar.replace('\\', '/') if user.avatar else ''
+            avatar_url = f"{settings.MEDIA_URL}{avatar_path}" if avatar_path  else ''
             print(avatar_url)
             return JsonResponse({
                 'code': 200,
@@ -312,8 +313,9 @@ class UserProfileView(APIViewBase):
                 # 生成文件名并保存
                 ext = avatar_file.name.split('.')[-1].lower()
                 filename = f'avatar_{user_id}_{uuid.uuid4().hex[:8]}.{ext}'
-                filepath = os.path.join('avatars', filename)
-                full_path = os.path.join(settings.MEDIA_ROOT, filepath)
+                # 改成这样（统一用正斜杠）
+                filepath = f'avatars/{filename}'  # ✅ 强制使用正斜杠
+                full_path = os.path.join(settings.MEDIA_ROOT, 'avatars', filename)  # 或者用 os.path.join
                 os.makedirs(os.path.dirname(full_path), exist_ok=True)
 
                 with open(full_path, 'wb+') as f:
