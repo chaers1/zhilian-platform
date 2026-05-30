@@ -4,7 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e37ccaf5-9892-4e73-a837-6460e7665094" name="更改" comment="" />
+    <list default="true" id="e37ccaf5-9892-4e73-a837-6460e7665094" name="更改" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/FastAPIProject.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/FastAPIProject.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../django_react/apps/users/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/../django_react/apps/users/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../docs/智联平台综页面文档/.obsidian/workspace.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../docs/智联平台综页面文档/.obsidian/workspace.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../docs/智联平台综页面文档/智联平台-开发日记.md.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../docs/智联平台综页面文档/智联平台-开发日记.md.md" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -19,6 +26,9 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
 }</component>
@@ -30,6 +40,10 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/前后端分离项目/智联平台/backend/FastAPIProject&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
@@ -80,6 +94,8 @@
       <workItem from="1779788005524" duration="598000" />
       <workItem from="1779860611089" duration="1827000" />
       <workItem from="1779959231566" duration="4500000" />
+      <workItem from="1780055671432" duration="3260000" />
+      <workItem from="1780123710739" duration="264000" />
     </task>
     <servers />
   </component>
