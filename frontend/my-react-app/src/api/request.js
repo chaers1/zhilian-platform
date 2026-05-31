@@ -5,12 +5,12 @@
  * 
  * 后端服务架构：
  * - Django (8000端口): 用户认证、爬虫管理、数据操作
- * - FastAPI (8001端口): 数据统计、图表查询、实时数据
+ * - FastAPI (8081端口): 数据统计、图表查询、实时数据
  */
 
 import axios from 'axios'
 
-//==================== 后端服务地址配置 ====================
+//==================== 后端服务地址配置 ====================//
 /**
  * 从环境变量读取后端配置
  * VITE_ 前缀是 Vite 的约定，用于暴露环境变量给前端代码
@@ -18,6 +18,7 @@ import axios from 'axios'
 const getBackendUrl = (host, port) => {
     const envHost = import.meta.env[`VITE_${host}`] || '127.0.0.1'
     const envPort = import.meta.env[`VITE_${port}`] || '8000'
+    console.log(`[DEBUG] ${host}: ${envHost}, ${port}: ${envPort}`)
     return `http://${envHost}:${envPort}/`
 }
 
@@ -42,7 +43,7 @@ const FASTAPI_BASE_URL = getBackendUrl('FASTAPI_HOST', 'FASTAPI_PORT')
  */
 export const djangoRequest = axios.create({
     baseURL: DJANGO_BASE_URL,
-    timeout: 10000,  // 10秒超时
+    timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -52,10 +53,10 @@ export const djangoRequest = axios.create({
  * FastAPI 请求实例（需要认证）
  * @description 用于需要用户登录的 FastAPI 接口
  * @example Dashboard 统计、图表数据、实时监控
- */
+  */
 export const fastapiRequest = axios.create({
     baseURL: FASTAPI_BASE_URL,
-    timeout: 15000,  // 15秒超时（统计数据可能需要更长时间）
+    timeout: 15000,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -68,7 +69,7 @@ export const fastapiRequest = axios.create({
  */
 export const publicRequest = axios.create({
     baseURL: DJANGO_BASE_URL,
-    timeout: 5000,  // 5秒超时
+    timeout: 5000,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -83,18 +84,14 @@ export const publicRequest = axios.create({
  * @returns {import('axios').InternalAxiosRequestConfig} 处理后的配置
  */
 const injectToken = (config) => {
-    // 优先从 sessionStorage 获取（会话级存储）
     let token = sessionStorage.getItem('token')
-    // 如果没有，从 localStorage 获取（持久化存储）
     if (!token) {
         token = localStorage.getItem('token')
     }
-    // 如果存在 token，添加到 Authorization 头
     if (token) {
         config.headers['Authorization'] = `Bearer ${token}`
     }
 
-    // 如果是 FormData，删除 Content-Type，让 axios 自动设置 multipart/form-data
     if (config.data instanceof FormData) {
         delete config.headers['Content-Type']
     }
@@ -119,71 +116,57 @@ const handleResponse = (response) => {
  * @returns {Promise<never>} 拒绝的 Promise
  */
 const handleError = (error) => {
-    // 检查是否有响应（服务器返回了状态码）
     if (error.response) {
         const { status } = error.response
 
         switch (status) {
-            // 401: 未授权（token过期或无效）
             case 401:
                 console.warn('[Request Error] 登录已过期，请重新登录')
-                // 清除所有存储的认证信息
                 sessionStorage.removeItem('token')
                 localStorage.removeItem('token')
                 sessionStorage.removeItem('userInfo')
                 localStorage.removeItem('userInfo')
-                // 跳转到登录页
                 window.location.href = '/'
                 break
 
-            // 403: 禁止访问（没有权限）
             case 403:
                 alert('抱歉，您没有权限执行此操作')
                 break
 
-            // 404: 资源不存在
             case 404:
                 console.warn('[Request Error] 请求的资源不存在')
                 break
 
-            // 500: 服务器内部错误
             case 500:
                 alert('服务器内部错误，请稍后重试')
                 break
 
-            // 其他错误
             default:
                 const message = error.response.data?.message || '请求失败'
                 alert(`请求失败：${message}`)
         }
     }
-    // 请求已发出但没有收到响应（网络问题）
     else if (error.request) {
         alert('网络连接失败，请检查网络连接')
     }
-    // 请求配置错误
     else {
         console.error('[Request Error] 请求配置错误:', error.message)
     }
 
-    // 将错误传递给调用方处理
     return Promise.reject(error)
 }
 
-// ==================== 注册拦截器 ====================
+// ==================== 注册拦截器 ====================//
 
-// Django 请求实例
 djangoRequest.interceptors.request.use(injectToken)
 djangoRequest.interceptors.response.use(handleResponse, handleError)
 
-// FastAPI 请求实例
 fastapiRequest.interceptors.request.use(injectToken)
 fastapiRequest.interceptors.response.use(handleResponse, handleError)
 
-// 公开请求实例（不需要 token 注入）
 publicRequest.interceptors.response.use(handleResponse, handleError)
 
-// ==================== 默认导出 ====================
+// ==================== 默认导出 ====================//
 /**
  * 默认导出请求实例集合
  * @property {axios.AxiosInstance} django - Django 请求实例

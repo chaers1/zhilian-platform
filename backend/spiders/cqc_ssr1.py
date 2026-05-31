@@ -181,12 +181,13 @@ class MySQLPipeline:
 
     async def open(self):
         """打开数据库连接"""
+        import os
         self.pool = await aiomysql.create_pool(
-            host='localhost',
-            port=3306,
-            user='root',
-            password='qazwsx@123',
-            db='dingban_backend',
+            host=os.getenv('DB_HOST', 'localhost'),
+            port=int(os.getenv('DB_PORT', 3306)),
+            user=os.getenv('DB_USER', 'root'),
+            password=os.getenv('DB_PASSWORD', 'qazwsx@123'),
+            db=os.getenv('DB_NAME', 'dingban_backend'),
             autocommit=True,
             minsize=5,
             maxsize=10,

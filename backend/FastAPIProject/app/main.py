@@ -3,7 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from .routers import dashboard
 from .dependencies import engine, Base
 from .config import settings
-
 # 创建数据库表
 Base.metadata.create_all(bind=engine)
 
@@ -17,7 +16,12 @@ app = FastAPI(
 # CORS 跨域配置
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:5174",
+        "http://127.0.0.1:5174",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

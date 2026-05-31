@@ -2,4 +2,4 @@ aiohttp==3.13.3
 aiomysql==0.3.2
 fake_useragent==2.2.0
 lxml==5.4.0
-redis==8.0.0
+redis==4.5.0

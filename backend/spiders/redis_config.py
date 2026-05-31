@@ -1,6 +1,6 @@
 # redis_config.py
+import os
 import redis
-from datetime import datetime
 
 
 class RedisClient:
@@ -10,11 +10,45 @@ class RedisClient:
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
-            cls._instance.client = redis.Redis(
-                host='localhost',
-                port=6379,
-                decode_responses=True
-            )
+
+            # ✅ 从环境变量读取 Redis 配置
+            redis_host = os.getenv('REDIS_HOST', 'localhost')
+            redis_port = int(os.getenv('REDIS_PORT', 6379))
+            redis_password = os.getenv('REDIS_PASSWORD', None)
+            redis_db = int(os.getenv('REDIS_DB', 0))
+            decode_responses = os.getenv('REDIS_DECODE_RESPONSES', 'true').lower() == 'true'
+
+            # 构建 Redis 连接参数（不加 protocol）
+            redis_kwargs = {
+                'host': redis_host,
+                'port': redis_port,
+                'db': redis_db,
+                'decode_responses': decode_responses,
+            }
+
+            # 只有设置了密码才添加 password 参数
+            if redis_password:
+                redis_kwargs['password'] = redis_password
+
+            cls._instance.client = redis.Redis(**redis_kwargs)
+
+            # 测试连接
+            try:
+                # ✅ 关键：手动切换到 RESP2 协议
+                cls._instance.client.execute_command('HELLO', 2)
+                cls._instance.client.ping()
+                print(f"✅ Redis 连接成功: {redis_host}:{redis_port}")
+                print(f"   Redis 版本: {cls._instance.client.info('server')['redis_version']}")
+            except Exception as e:
+                print(f"❌ Redis 连接失败: {e}")
+                print(f"   尝试不发送 HELLO 命令...")
+                # 如果 HELLO 命令失败，尝试普通连接
+                try:
+                    cls._instance.client.ping()
+                    print(f"✅ Redis 连接成功（兼容模式）: {redis_host}:{redis_port}")
+                except Exception as e2:
+                    print(f"❌ Redis 连接仍然失败: {e2}")
+
         return cls._instance
 
     def get_client(self):

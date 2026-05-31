@@ -78,35 +78,37 @@ WSGI_APPLICATION = "django_react.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+# Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dingban_backend',
-        'USER': 'root',
-        'PASSWORD': 'qazwsx@123',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': os.getenv('DB_NAME', 'dingban_backend'),
+        'USER': os.getenv('DB_USER', 'root'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'qazwsx@123'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '3306'),
         'OPTIONS': {
             'charset': 'utf8mb4',
         },
     },
     'mongodb': {
         'ENGINE': 'django',
-        'NAME': 'movie_db',
+        'NAME': os.getenv('MONGO_DB', 'movie_db'),
         'CLIENT': {
-            'host': 'mongodb://localhost:27017',
+            'host': os.getenv('MONGO_HOST', 'mongodb://localhost:27017'),
         },
     }
-
 }
 
-# Redis 配置（单独放在外面）
+# Redis 配置
 REDIS_CONFIG = {
-    'host': 'localhost',
-    'port': 6379,
-    'db': 0,
+    'host': os.getenv('REDIS_HOST', 'localhost'),
+    'port': int(os.getenv('REDIS_PORT', 6379)),
+    'db': int(os.getenv('REDIS_DB', 0)),
+    'password': os.getenv('REDIS_PASSWORD', None),
     'decode_responses': True,
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -180,5 +182,5 @@ STATIC_URL = "static/"
 CORS_ALLOW_ALL_ORIGINS = True
 
 # 媒体文件配置
-MEDIA_URL = "/media/"  # 改为相对路径
+MEDIA_URL = "/media/"  # 改为相对路径`a
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
