@@ -130,7 +130,7 @@ class UserLoginView(APIViewBase):
                 'email': user_data.get('email'),
                 'name': user_data.get('name'),
                 'exp': exp_time,
-            }, settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
+            }, settings.SECRET_KEY, algorithm='HS256')
             logger.warning(f'token:{token}')
             logger.warning(f'token:{token}')
 

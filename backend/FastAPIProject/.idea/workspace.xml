@@ -6,18 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="e37ccaf5-9892-4e73-a837-6460e7665094" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../django_react/django_react/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/../django_react/django_react/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../spiders/cqc_ssr1.py" beforeDir="false" afterPath="$PROJECT_DIR$/../spiders/cqc_ssr1.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../spiders/redis_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/../spiders/redis_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../spiders/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../spiders/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../docs/智联平台综页面文档/.obsidian/workspace.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../docs/智联平台综页面文档/.obsidian/workspace.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../docs/智联平台综页面文档/智联平台-开发日记.md.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../docs/智联平台综页面文档/智联平台-开发日记.md.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/my-react-app/.env" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/my-react-app/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/my-react-app/.env.local" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/my-react-app/.env.local" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/my-react-app/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/my-react-app/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/my-react-app/src/api/request.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/my-react-app/src/api/request.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../django_react/media/avatars/avatar_11_2ae6cd35.jpg" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,7 +95,8 @@
       <workItem from="1780125951678" duration="5714000" />
       <workItem from="1780151535021" duration="2082000" />
       <workItem from="1780154238374" duration="1460000" />
-      <workItem from="1780194282908" duration="932000" />
+      <workItem from="1780194282908" duration="2132000" />
+      <workItem from="1780322049817" duration="475000" />
     </task>
     <servers />
   </component>
