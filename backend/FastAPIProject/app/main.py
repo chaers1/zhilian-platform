@@ -1,8 +1,11 @@
-﻿from fastapi import FastAPI
+﻿import json
+
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routers import dashboard
 from .dependencies import engine, Base
 from .config import settings
+import os
 # 创建数据库表
 Base.metadata.create_all(bind=engine)
 
@@ -13,15 +16,18 @@ app = FastAPI(
     debug=settings.DEBUG
 )
 
+# ✅ CORS 跨域配置 - 从环境变量读取
+origins_json = os.getenv("BACKEND_CORS_ORIGINS", '["http://localhost:5173"]')
+try:
+    origins = json.loads(origins_json)
+except Exception as e:
+    print(f"CORS origins parse error: {e}, using default")
+    origins = ["http://localhost:5173"]
+
 # CORS 跨域配置
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:5174",
-        "http://127.0.0.1:5174",
-    ],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

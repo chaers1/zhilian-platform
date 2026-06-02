@@ -10,18 +10,17 @@ import redis
 import time
 import sys
 import subprocess
-
+import os
 
 class SpiderOrchestrator:
     """爬虫调度器 - 统一管理所有爬虫的启动和停止"""
 
     def __init__(self):
         self.redis_client = redis.Redis(
-            host='localhost',
-            port=6379,
+            host=os.getenv('REDIS_HOST', 'localhost'),
+            port=int(os.getenv('REDIS_PORT', 6379)),
             decode_responses=True
         )
-
         self.spiders = {
             'movie': 'cqc_ssr1',
         }

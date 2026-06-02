@@ -6,7 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="e37ccaf5-9892-4e73-a837-6460e7665094" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../django_react/media/avatars/avatar_11_2ae6cd35.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../spiders/orchestrator.py" beforeDir="false" afterPath="$PROJECT_DIR$/../spiders/orchestrator.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -96,7 +97,8 @@
       <workItem from="1780151535021" duration="2082000" />
       <workItem from="1780154238374" duration="1460000" />
       <workItem from="1780194282908" duration="2132000" />
-      <workItem from="1780322049817" duration="475000" />
+      <workItem from="1780322049817" duration="1014000" />
+      <workItem from="1780364357918" duration="1823000" />
     </task>
     <servers />
   </component>
