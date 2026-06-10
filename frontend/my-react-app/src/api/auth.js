@@ -242,13 +242,19 @@ export const updateProfile = async (data) => {
  * 总体概览页面，数据信息接口
  * 数据总量，今日，七天数据抓取趋势，数据分类分布，爬虫更新，日军抓取，成功率抓取频率
  */
-export const getDashboardStats = async () => {
+export const getDashboardStats = async (retryCount = 0) => {
     try {
         const res = await fastapiRequest.get('/api/crawler/dashboard/stats')
         console.log(res)
         return { success: true, data: res.data, message: res.message || '获取数据统计成功' }
     } catch (error) {
         console.error('获取数据统计失败:', error)
+
+        if (error.code === 'ECONNABORTED' && retryCount < 1) {
+            console.log('请求超时，尝试重试...')
+            return getDashboardStats(retryCount + 1)
+        }
+
         return { success: false, message: error.response?.data?.message || '获取数据统计失败，请稍后重试' }
     }
 }
@@ -282,7 +288,7 @@ export const controlSpider = async (spiderType, action, source = 'ssr2') => {
  */
 export const getSpiderStatus = async (spiderName) => {
     try {
-        const res = await djangoRequest.get(`api/crawler/spider/${spiderName}/status`)
+        const res = await fastapiRequest.get(`/api/crawler/dashboard/${spiderName}/status`)
         console.log('getSpiderStatus 返回:', res)  // 调试日志
         return { success: true, data: res.data || res, message: res.message || '获取爬虫状态成功' }
     } catch (error) {
@@ -298,20 +304,291 @@ export const getSpiderStatus = async (spiderName) => {
  * apiurl: http://localhost:8001/api/spider/movie/logs
  */
 
-export const getSpiderLogs = async (spiderName, limit = 50) => {
+export const getSpiderLogs = async (spiderName, limit = 50, retryCount = 0) => {
     try {
         const res = await fastapiRequest.get(`/api/crawler/dashboard/${spiderName}/logs?limit=${limit}`)
         console.log('FastAPI 返回:', res)
-        // FastAPI 直接返回数组时，数据可能在 res 或 res.data 中
         const data = res.data !== undefined ? res.data : res;
         return { success: true, data: data || [], message: '获取爬虫日志成功' }
     } catch (error) {
         console.error('获取爬虫日志失败:', error)
+
+        if (error.code === 'ECONNABORTED' && retryCount < 1) {
+            console.log('请求超时，尝试重试...')
+            return getSpiderLogs(spiderName, limit, retryCount + 1)
+        }
+
         return { success: false, message: error.response?.data?.message || '获取爬虫日志失败，请稍后重试' }
     }
 }
 
+/**
+ * 获取历史运行记录接口
+ * @param {string} spiderType - 爬虫类型：movie, news, novel
+ * @returns {Promise<{code: number, data: Array, total: number}>}
+ */
+export const getSpiderHistory = async () => {
+    try {
+        const response = await djangoRequest.get('/api/crawler/taskhistory')
+        return response
+    } catch (error) {
+        console.error('获取历史运行记录失败：', error)
+        return {
+            code: 500, data: [], total: 0
+        }
+    }
+}
+
+/**
+ * 获取爬虫数据分析接口 fastapi
+ * @param {string} spiderType - 爬虫类型：movie, news, novel
+ * @returns {Promise<{success: boolean, data?: Object, message?: string}>}
+ */
+
+export const getSpiderAnalysis = async (spiderType) => {
+    try {
+        const res = await fastapiRequest.get(`/api/crawler/dashboard/${spiderType}/analysis`)
+        return { success: true, data: res.data || res, message: res.message || '获取数据分析成功' }
+    } catch (error) {
+        console.error('获取数据分析失败:', error)
+        return { success: false, message: error.response?.data?.message || '获取数据分析失败，请稍后重试' }
+    }
+}
+/**
+ * 获取爬虫七天内数据分析接口-折线图 fastapi
+ * @param {string} spiderType - 爬虫类型：movie, news, novel
+ * @returns {Promise<{success: boolean, data?: Object, message?: string}>}
+ */
+
+export const getSpiderTrent = async (spiderType) => {
+    try {
+        const res = await fastapiRequest.get(`/api/crawler/dashboard/${spiderType}/trend`)
+        return { success: true, data: res.data || res, message: res.message || '获取七天内数据分析成功' }
+    } catch (error) {
+        console.error('获取七天内数据分析失败:', error)
+        return { success: false, message: error.response?.data?.message || '获取七天内数据分析失败，请稍后重试' }
+    }
+}
+
+/**
+ * 获取电影数据接口
+ * @param {string} keyword - 搜索关键词
+ * @param {Object} filters - 筛选条件 { year: '2020年后', rating: '9分以上' }
+ * @returns {Promise<{success: boolean, data?: Object, message?: string}>}
+ */
+export const getMovieData = async (keyword = "", filters = {}) => {
+
+    try {
+        const params = {
+            keyword: keyword,
+        }
+        // 添加筛选条件
+        Object.entries(filters).forEach(([key, value]) => {
+            if (value !== '全部') {
+                params[key] = value;
+            }
+
+        });
+        console.log('getMovieData发送的请求参数:', params);
+        console.log('getMovieData请求的 URL:', `/api/crawler/dashboard/movie/data?${new URLSearchParams(params).toString()}`);
+        const res = await fastapiRequest.get('/api/crawler/dashboard/movie/data', { params });
+        console.log('getMovieData 返回:', res);
+        return { success: true, data: res.data.data || res.data, message: '获取电影数据成功' };
+    } catch (error) {
+        console.error('获取电影数据失败:', error);
+        return { success: false, message: error.response?.data?.message || '获取电影数据失败', data: [] };
+    }
+};
+
+/**
+ * 获取新闻数据接口
+ */
+export const getNewsData = async (keyword = "", filters = {}) => {
+    try {
+        const params = { keyword };
+        Object.entries(filters).forEach(([key, value]) => {
+            if (value !== '全部') {
+                params[key] = value;
+            }
+        });
+        const res = await fastapiRequest.get('/api/crawler/dashboard/news/data', { params });
+        console.log('getNewsData 返回:', res);
+        return { success: true, data: res.data.data || res.data, message: '获取新闻数据成功' };
+    } catch (error) {
+        console.error('获取新闻数据失败:', error);
+        return { success: false, message: error.response?.data?.message || '获取新闻数据失败', data: [] };
+    }
+};
+
+/**
+ * 获取小说数据接口
+ */
+export const getNovelData = async (keyword = "", filters = {}) => {
+    try {
+        const params = { keyword };
+        Object.entries(filters).forEach(([key, value]) => {
+            if (value !== '全部') {
+                params[key] = value;
+            }
+        });
+        const res = await fastapiRequest.get('/api/crawler/dashboard/novel/data', { params });
+        console.log('getNovelData 返回:', res);
+        return { success: true, data: res.data.data || res.data, message: '获取小说数据成功' };
+    } catch (error) {
+        console.error('获取小说数据失败:', error);
+        return { success: false, message: error.response?.data?.message || '获取小说数据失败', data: [] };
+    }
+};
+
+/**
+ * 获取全部数据接口
+ */
+export const getAllData = async (keyword = "", filters = {}) => {
+    try {
+        const params = { keyword };
+        Object.entries(filters).forEach(([key, value]) => {
+            if (value !== '全部') {
+                params[key] = value;
+            }
+        });
+        const res = await fastapiRequest.get('/api/crawler/dashboard/all/data', { params });
+        console.log('getAllData 返回:', res);
+        return { success: true, data: res.data.data || res.data, message: '获取全部数据成功' };
+    } catch (error) {
+        console.error('获取全部数据失败:', error);
+        return { success: false, message: error.response?.data?.message || '获取全部数据失败', data: [] };
+    }
+};
+
+/**
+ * 获取级联筛选配置接口
+ * @returns {Promise<{code: number, data: Object, message?: string}>}
+ */
+
+export const getCascadeFilters = async () => {
+    try {
+        const res = await fastapiRequest.get(`/api/crawler/dashboard/cascadefilters`)
+        console.log('getCascadeFilters l级联筛选返回:', res)
+
+        return { code: 200, data: res.data || res, message: res.message || 'success' }
+    } catch (error) {
+        console.error('获取筛选配置失败:', error);
+        return { success: false, message: error.response?.data?.message || '获取筛选配置失败，请稍后重试', data: null };
+    }
+}
+
+/**
+ * 获取数据详情接口（查看功能）
+ * @param {string} type - 数据类型：movie, news, novel
+ * @param {number|string} id - 数据ID
+ * @param {string} name - 数据名称（用于精确查找）
+ * @returns {Promise<{success: boolean, data?: Object, message?: string}>}
+ */
+export const getDataDetail = async (type, id, name) => {
+    try {
+        const params = {
+            type: type,
+            id: id,
+            name: name || ''
+        };
+        console.log('getDataDetail 发送的参数:', params);
+        const res = await fastapiRequest.get('/api/crawler/dashboard/detail', { params });
+        console.log('getDataDetail 返回:', res);
+
+        // 后端返回格式: {"code": 200, "success": true, "data": {...}}
+        if (res.success === true) {
+            return { success: true, data: res.data, message: res.message || '获取详情成功' };
+        } else {
+            return { success: false, message: res.message || '获取详情失败', data: null };
+        }
+    } catch (error) {
+        console.error('获取详情失败:', error);
+        return { success: false, message: error.response?.data?.message || '获取详情失败', data: null };
+    }
+};
+
+/**
+ * 导出CSV接口
+ * @param {Object} params - 导出参数
+ * @param {string} params.type - 数据类型：movie, news, novel
+ * @param {string} [params.keyword] - 搜索关键词
+ * @param {Object} [params.filters] - 筛选条件
+ * @param {Array<number>} [params.ids] - 数据ID列表（可选，不传则导出全部）
+ * @returns {Promise<{success: boolean, data?: Blob, message?: string}>}
+ */
+export const exportCsv = async (params) => {
+    try {
+        console.log("exportCsv 发送的参数:", params);
+
+        // 设置 responseType: 'blob' 来接收文件流
+        const response = await fastapiRequest.post(
+            '/api/crawler/dashboard/exportcsv',
+            params,
+            { responseType: 'blob' }
+        );
+
+        console.log("exportCsv 返回:", response);
+
+        // 检查是否是 Blob 对象
+        if (response instanceof Blob) {
+            // 检查 Content-Type 是否正确
+            const contentType = response.type || 'application/octet-stream';
+            if (contentType.includes('csv') || contentType.includes('text')) {
+                return { success: true, data: response, message: '导出成功' };
+            }
+
+            // 如果不是CSV类型，尝试解析为JSON错误
+            try {
+                const text = await response.text();
+                const errorData = JSON.parse(text);
+                return {
+                    success: false,
+                    message: errorData.detail || errorData.message || '导出失败',
+                    data: null
+                };
+            } catch {
+                return { success: false, message: '返回数据格式错误', data: null };
+            }
+        }
+
+        // 如果返回的是对象（JSON格式的错误）
+        if (response && typeof response === 'object') {
+            return {
+                success: false,
+                message: response.detail || response.message || '导出失败',
+                data: null
+            };
+        }
+
+        return { success: true, data: response, message: '导出成功' };
+
+    } catch (error) {
+        console.error('导出失败:', error);
+
+        // 处理各种错误情况
+        if (error.response) {
+            // HTTP 错误（4xx, 5xx）
+            const { status, data } = error.response;
+
+            if (data && (data.detail || data.message)) {
+                return { success: false, message: data.detail || data.message, data: null };
+            }
+
+            return { success: false, message: `请求失败，状态码: ${status}`, data: null };
+
+        } else if (error.request) {
+            // 请求已发送但无响应
+            return { success: false, message: '网络超时或服务器无响应', data: null };
+
+        } else {
+            // 请求配置错误
+            return { success: false, message: error.message || '请求配置错误', data: null };
+        }
+    }
+};
 export default {
     register, login, logout, getUserInfo,
-    updateProfile, getDashboardStats, controlSpider
+    updateProfile, getDashboardStats, controlSpider, getSpiderHistory,
+    getSpiderAnalysis, getSpiderTrent, getMovieData, getCascadeFilters, getDataDetail,
+    exportCsv
 }

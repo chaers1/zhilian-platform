@@ -136,8 +136,18 @@ def dict_data(response_text, url, redis_logger) -> dict:
         categories = html.xpath(
             '//*[contains(@class, "categories")]//button[contains(@class, "el-button")]//span/text()')
         info_spans = html.xpath("//div[@class='m-v-sm info']/span/text()")
+        print(info_spans)
         score = html.xpath('//p[@class="score m-t-md m-b-n-sm"]/text()')
         drama = html.xpath('//*[contains(@class, "drama")]/p[1]/text()')
+
+        # 上映日期处理
+        release_date = None
+        if len(info_spans) > 3:
+            raw_date = info_spans[3].strip()
+            if '上映' in raw_date:
+                release_date = raw_date.replace("上映",'').strip()
+            else:
+                release_date = raw_date
 
         detail_dict = {
             'movies_type': 'ssr1',  # 固定数据，主要是却别网站的来源
@@ -145,6 +155,7 @@ def dict_data(response_text, url, redis_logger) -> dict:
             'categories_str': ','.join([cat.strip() for cat in categories] if categories else []),
             'region': info_spans[0].strip() if len(info_spans) > 0 else '未知',
             'duration': info_spans[2].strip() if len(info_spans) > 2 else '未知',
+            "release_date":release_date,
             'score': score[0].strip() if score else '0.0',
             'drama': drama[0].strip() if drama else '',
             'url': url
@@ -202,8 +213,8 @@ class MySQLPipeline:
         async with self.pool.acquire() as conn:
             async with conn.cursor() as cur:
                 sql = """
-                    INSERT INTO ssr_one_movies (movies_type, name, categories_str, region, duration, score, drama, url, created_at)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO ssr_one_movies (movies_type, name, categories_str, region, duration, score, drama, url, created_at, release_date)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """
                 await cur.execute(sql, (
                     item.get('movies_type', 'ssr1'),
@@ -215,6 +226,7 @@ class MySQLPipeline:
                     item.get('drama', ''),
                     item.get('url'),
                     datetime.now(),
+                    item.get("release_date",''),
                 ))
                 self.save_count += 1
                 self.add_log('success', f'保存成功: {item.get("name")}')
@@ -225,6 +237,28 @@ class MySQLPipeline:
                 self.redis_client.hset("spider:movie:status", "progress_percent", f"{progress_percent:.1f}%")
                 self.redis_client.hset("spider:movie:status", "progress_info",
                                        f"已完成 {self.save_count}/{self.total_expected} ({progress_percent:.1f}%)")
+
+    async def update_crawler_task(self, task_id: int, save_count: int, total_expected: int, status: str):
+        """更新 crawler_task 表中的任务记录"""
+
+        async with self.pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                sql = """
+                    UPDATE crawler_task 
+                    SET status = %s,
+                        completed_time = %s,
+                        items_count = %s,
+                        total_expected = %s
+                    WHERE id = %s
+                """
+                await cur.execute(sql, (
+                    status,
+                    datetime.now(),
+                    save_count,
+                    total_expected,
+                    task_id
+                ))
+                print(f"✅ 任务 {task_id} 更新成功 (状态: {status})")
 
     async def update_page_stats(self, page_num: int, detail_count: int):
         """更新每页的统计信息"""
@@ -440,11 +474,23 @@ async def main():
     # ✅ 获取最终统计
     final_stats = await mysql_pipeline.get_final_statistics()
 
-    await mysql_pipeline.close()
 
     # ✅ 更新最终状态
     try:
         stop_flag = redis_client.get("spider:movie:stop_flag")
+
+        # 更新数据库
+
+        task_id = redis_client.hget("spider:movie:task", "task_id")
+        print('taskid',task_id)
+        if task_id:
+            await mysql_pipeline.update_crawler_task(
+                task_id=int(task_id),
+                save_count=final_stats['total_saved'],
+                total_expected=final_stats['total_expected'],
+                status='completed' if stop_flag != "1" else 'stopped'
+            )
+        await mysql_pipeline.close()
 
         # 更新详细统计
         redis_client.hset("spider:movie:status", "final_count", str(final_stats['total_saved']))

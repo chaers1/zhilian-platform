@@ -10,6 +10,7 @@ import Sidebar from './components/Sidebar/Sidebar.jsx';
 import MainContent from './components/MainContent/MainContent.jsx';
 import Layout from '../../components/Layout/Layout.jsx';
 import Crawler from './components/Crawler/Crawler.jsx';
+import DataList from './components/DataList/DataList.jsx';
 import { getSpiderStatus, getSpiderLogs } from '../../api/auth';
 
 
@@ -148,8 +149,14 @@ const WebCrawler = () => {
         spiderLogsRef.current = spiderLogs;
     }, [spiderLogs]);
 
-    // 定时获取爬虫日志（只在 running 时轮询）
+    // 定时获取爬虫日志
     useEffect(() => {
+        // 先清除旧的定时器（防止重复，关键修复）
+        if (logsIntervalRef.current) {
+            clearInterval(logsIntervalRef.current);
+            logsIntervalRef.current = null;
+        }
+
         if (activeItem === 'overview') {
             return;
         }
@@ -179,15 +186,15 @@ const WebCrawler = () => {
         // 立即执行一次
         fetchLogs();
 
-        // 先清除旧的定时器（防止重复）
-        if (logsIntervalRef.current) {
-            clearInterval(logsIntervalRef.current);
-            logsIntervalRef.current = null;
-        }
+        // 在爬虫页面时始终轮询，使用 ref 获取最新状态来决定频率
+        const startPolling = () => {
+            const currentStatus = spiderStatusRef.current[activeItem];
+            const interval = currentStatus === 'running' ? 1000 : 10000;
+            logsIntervalRef.current = setInterval(fetchLogs, interval);
+        };
 
-        // 只有 running 状态时才定时轮询
-        if (spiderStatus[activeItem] === 'running') {
-            logsIntervalRef.current = setInterval(fetchLogs, 1500);
+        if (activeItem !== 'overview' && activeItem !== 'data-query') {
+            startPolling();
         }
 
         return () => {
@@ -196,8 +203,7 @@ const WebCrawler = () => {
                 logsIntervalRef.current = null;
             }
         };
-    }, [activeItem, spiderStatus]);
-    // 爬虫状态变化时，更新日志定时器
+    }, [activeItem]); // 移除 spiderStatus 依赖，避免状态更新导致重复创建
 
     // 菜单项点击处理
     const handleItemClick = useCallback((itemId) => {
@@ -270,12 +276,12 @@ const WebCrawler = () => {
             }
         }
 
-        // 更新抓取数量（只在数量增加时更新，避免回退）
+        // 更新抓取数量（在 running 状态时允许重置，其他状态只增加）
         if (optCurrentCount !== null && optCurrentCount !== undefined) {
             const existingCount = currentCounts[itemId] || 0;
-            if (optCurrentCount > existingCount) {
-                const increase = optCurrentCount - existingCount;
-                console.log(`爬虫 ${itemId} 新增 ${increase} 条数据，当前总数: ${optCurrentCount}`);
+            if (newStatus === 'running' || optCurrentCount > existingCount) {
+                const change = optCurrentCount - existingCount;
+                console.log(`爬虫 ${itemId} ${change > 0 ? '新增' : '重置'} ${Math.abs(change)} 条数据，当前总数: ${optCurrentCount}`);
                 setSpiderCurrentCounts(prev => ({
                     ...prev,
                     [itemId]: optCurrentCount
@@ -288,14 +294,6 @@ const WebCrawler = () => {
             setSpiderTotalExpected(prev => ({
                 ...prev,
                 [itemId]: optTotalExpected
-            }));
-        }
-
-        // 更新进度百分比
-        if (optProgressPercent !== null && optProgressPercent !== undefined) {
-            setSpiderProgressPercent(prev => ({
-                ...prev,
-                [itemId]: optProgressPercent
             }));
         }
 
@@ -320,26 +318,34 @@ const WebCrawler = () => {
         'novel-crawler': '小说爬虫'
     }
 
+    // 爬虫类型映射表（必须在使用前定义）
+    const spiderTypeMap = {
+        'movie-crawler': 'movie',      // 电影爬虫
+        'news-crawler': 'news',        // 新闻爬虫
+        'novel-crawler': 'novel'       // 小说爬虫
+    };
+
     // 渲染对应的内容
     const renderContent = () => {
         const isRunning = spiderStatus[activeItem] === 'running';
         const displayTime = isRunning ? spiderRunTimes[activeItem] : spiderLastRunTimes[activeItem];
 
+        const currentSpiderType = spiderTypeMap[activeItem];
+
         const commonProps = {
             sidebarOpen: sidebarOpen,
             onToggleSidebar: toggleSidebar,
             crawlerName: crawlerNames[activeItem] || '爬虫页面',
-            spiderType: spiderTypeMap[activeItem] || 'movie',
+            spiderType: currentSpiderType || 'movie',
             currentStatus: spiderStatus[activeItem] || 'idle',
-            runTime: displayTime, // 直接传计算好的运行时长
-            startTime: spiderStartTimes[activeItem], // 启动时间戳
-            currentCount: spiderCurrentCounts[activeItem] || 0, // 抓取数量
-            totalExpected: spiderTotalExpected[activeItem] || 0, // 需要抓取的总数
-            progressPercent: spiderProgressPercent[activeItem] || '0%', // 抓取进度百分比
-            logs: spiderLogs[activeItem] || [],// 爬虫实时日志
+            runTime: displayTime,
+            startTime: spiderStartTimes[activeItem],
+            currentCount: spiderCurrentCounts[activeItem] || 0,
+            totalExpected: spiderTotalExpected[activeItem] || 0,
+            progressPercent: spiderProgressPercent[activeItem] || '0%',
+            logs: spiderLogs[activeItem] || [],
 
             onStatusChange: (status) => {
-                // true 表示这是用户操作，5秒内轮询不应该覆盖
                 updateSpiderStatus(activeItem, status, true);
             }
         };
@@ -347,6 +353,8 @@ const WebCrawler = () => {
         switch (activeItem) {
             case 'overview':
                 return <MainContent {...commonProps} />;
+            case 'data-query':
+                return <DataList sidebarOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />;
             case 'movie-crawler':
             case 'news-crawler':
             case 'novel-crawler':
@@ -373,17 +381,16 @@ const WebCrawler = () => {
         }
     }, []);
 
-    // 爬虫启动停止映射表
-    const spiderTypeMap = {
-        'movie-crawler': 'movie',      // 电影爬虫
-        'news-crawler': 'news',        // 新闻爬虫
-        'novel-crawler': 'novel'       // 小说爬虫
-    };
-
-    // 定时轮询当前查看的爬虫状态（优化：只在 running 时轮询）
+    // 定时轮询当前查看的爬虫状态
     useEffect(() => {
-        // 如果是概览页面，或者当前爬虫不是 running 状态，不轮询
-        if (activeItem === 'overview' || spiderStatus[activeItem] !== 'running') {
+        // 先清除旧的定时器（防止重复，关键修复）
+        if (statusIntervalRef.current) {
+            clearInterval(statusIntervalRef.current);
+            statusIntervalRef.current = null;
+        }
+
+        // 如果是概览页面或数据查询页面，不轮询
+        if (activeItem === 'overview' || activeItem === 'data-query') {
             return;
         }
 
@@ -412,7 +419,6 @@ const WebCrawler = () => {
                         updateSpiderStatus(activeItem, backendStatus, false, backendStartTime, backendCurrentCount, backendTotalExpected, backendProgressPercent);
                     } else {
                         // 用户刚操作过，只更新抓取数量和进度，不更新状态
-                        // 直接更新状态而不经过 updateSpiderStatus 的状态判断
                         if (backendCurrentCount !== null && backendCurrentCount !== undefined) {
                             console.log(`爬虫 ${activeItem} 当前总数: ${backendCurrentCount}`);
                             setSpiderCurrentCounts(prev => ({
@@ -442,14 +448,8 @@ const WebCrawler = () => {
         // 立即执行一次
         fetchCurrentStatus();
 
-        // 先清除旧的定时器（防止重复）
-        if (statusIntervalRef.current) {
-            clearInterval(statusIntervalRef.current);
-            statusIntervalRef.current = null;
-        }
-
-        // 每2秒轮询一次（只有 running 时才轮询）
-        statusIntervalRef.current = setInterval(fetchCurrentStatus, 2000);
+        // 在爬虫页面时始终轮询，使用固定频率
+        statusIntervalRef.current = setInterval(fetchCurrentStatus, 1500);
 
         return () => {
             if (statusIntervalRef.current) {
@@ -457,7 +457,7 @@ const WebCrawler = () => {
                 statusIntervalRef.current = null;
             }
         };
-    }, [activeItem, spiderStatus]); // ✅ 状态变化时重新创建
+    }, [activeItem]); // 移除 spiderStatus 依赖，避免状态更新导致重复创建
 
     return (
         <Layout sidebarOpen={sidebarOpen}>

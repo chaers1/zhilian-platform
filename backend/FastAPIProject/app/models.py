@@ -2,7 +2,7 @@
 电影数据表，爬虫任务表
 '''
 
-from sqlalchemy import Column, Integer, String, DateTime, Text, Boolean, Float
+from sqlalchemy import Column, Integer, String, DateTime, Text, Boolean, Float,JSON,Date
 from sqlalchemy.sql import func
 from .dependencies import Base
 
@@ -21,6 +21,7 @@ class SsrOneMovies(Base):
     drama = Column(Text)
     url = Column(String(500))
     created_at = Column(DateTime, server_default=func.now())
+    release_date = Column(Date,nullable=True)
 
 
 class CrawlerTask(Base):
@@ -33,10 +34,18 @@ class CrawlerTask(Base):
     email = Column(String(254))
     spider_type = Column(String(50))
     source = Column(String(100))
-    action = Column(String(10))
+    # ✅ 新增：status 字段
+    status = Column(String(20), default='running')
+    # ✅ 新增：时间字段
+    start_time = Column(DateTime, nullable=True)
+    stop_time = Column(DateTime, nullable=True)
+    completed_time = Column(DateTime, nullable=True)
+    # ✅ 新增：统计字段
+    items_count = Column(Integer, default=0)
+    total_expected = Column(Integer, default=0)
+    # ✅ 新增：错误信息（JSON 字段）
+    error_info = Column(JSON, default=list, nullable=True)
     created_at = Column(DateTime, server_default=func.now())
-    error_msg = Column(Text, nullable=True)
-    is_success = Column(Boolean, default=True)
 
 
 class User(Base):

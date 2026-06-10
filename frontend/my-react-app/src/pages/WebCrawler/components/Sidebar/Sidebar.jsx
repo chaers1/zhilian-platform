@@ -12,6 +12,7 @@ const Sidebar = ({ activeItem, onItemClick, isOpen = true, user, spiderStatus })
     // 统一的菜单数据
     const menuItems = [
         { id: 'overview', name: '总体概览', icon: 'fa-home', type: 'menu' },
+        { id: 'data-query', name: '数据查询', icon: 'fa-search', type: 'menu' },
         { id: 'spider-group', name: '爬虫集群', icon: 'fa-bug', type: 'group' },
         { id: 'movie-crawler', name: '电影爬虫', status: '空闲', type: 'spider' },
         { id: 'news-crawler', name: '新闻爬虫', status: '已停止', type: 'spider' },

@@ -184,3 +184,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 # 媒体文件配置
 MEDIA_URL = "/media/"  # 改为相对路径`a
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+# 禁用 Django 的数据库版本检查（因为使用 MariaDB 10.6 替代 MySQL 8.0）
+import django.db.backends.mysql.base
+django.db.backends.mysql.base.DatabaseWrapper.check_database_version_supported = lambda self: None

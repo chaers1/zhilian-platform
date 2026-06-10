@@ -53,7 +53,7 @@ export const djangoRequest = axios.create({
  * FastAPI 请求实例（需要认证）
  * @description 用于需要用户登录的 FastAPI 接口
  * @example Dashboard 统计、图表数据、实时监控
-  */
+ */
 export const fastapiRequest = axios.create({
     baseURL: FASTAPI_BASE_URL,
     timeout: 15000,

@@ -9,7 +9,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MonitorTab from './MonitorTab';  // 导入组件
 import AnalysisTab from './AnalysisTab';  // 导入组件
-import DataTab from './DataTab';  // 导入组件
 
 
 
@@ -17,7 +16,7 @@ export const Crawler = ({ sidebarOpen, onToggleSidebar, crawlerName, spiderType,
     onStatusChange, currentStatus, runTime, startTime, currentCount,
     totalExpected, progressPercent, logs }) => {
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState('monitor');  // 添加标签状态
+    const [activeTab, setActiveTab] = useState('monitor');
 
     return (
         <div id='mainContent' className="main-content">
@@ -30,7 +29,7 @@ export const Crawler = ({ sidebarOpen, onToggleSidebar, crawlerName, spiderType,
                 </div>
                 <div className='header-title'>
                     <h1 id='pageTitle'>{crawlerName}</h1>
-                    <p id='pageSubtitle'>运行监控 · 数据分析 · 数据管理</p>
+                    <p id='pageSubtitle'>运行监控 · 数据分析</p>
                 </div>
                 <div className='header-actions'>
                     <button className='btn-back-home' onClick={() => navigate('/')}>
@@ -51,10 +50,6 @@ export const Crawler = ({ sidebarOpen, onToggleSidebar, crawlerName, spiderType,
                         className={`tab ${activeTab === 'analysis' ? 'active' : ''}`}
                         onClick={() => setActiveTab('analysis')}
                     >📊 数据分析</div>
-                    <div
-                        className={`tab ${activeTab === 'data' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('data')}
-                    >🔄 抓取数据</div>
                 </div>
 
                 {/* 内容区域 - 使用条件渲染 */}
@@ -71,13 +66,7 @@ export const Crawler = ({ sidebarOpen, onToggleSidebar, crawlerName, spiderType,
                 )}
                 {activeTab === 'analysis' && (
                     <div className='tab-content active'>
-                        {/* 数据分析内容（后续添加） */}
-                        <AnalysisTab crawlerName={crawlerName} />
-                    </div>
-                )}
-                {activeTab === 'data' && (
-                    <div className='tab-content active'>
-                        <DataTab crawlerName={crawlerName} />
+                        <AnalysisTab spiderType={spiderType} />
                     </div>
                 )}
             </div>

@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docker部署成功总结.md",
+                "file": "Git 推送 流程.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "docker部署成功总结"
+              "title": "Git 推送 流程"
             }
           }
         ],
@@ -200,12 +200,12 @@
   },
   "active": "ea21ca6b31fed66f",
   "lastOpenFiles": [
-    "智联平台 - 后端Django.md.md",
-    "docker部署成功总结.md",
-    "智联平台-开发日记.md.md",
-    "Git 推送 流程.md",
-    "智联平台 - 爬虫.md.md",
     "乌班图服务器链接流程.MD.md",
+    "智联平台 - 后端Django.md.md",
+    "智联平台 - 爬虫.md.md",
+    "智联平台-开发日记.md.md",
+    "docker部署成功总结.md",
+    "Git 推送 流程.md",
     "智联平台 - Fastapi.md.md",
     "智联平台 - 项目接口文档.md.md",
     "智联平台 - 前端React.md.md"

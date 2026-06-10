@@ -114,15 +114,15 @@ docker compose stop
 sudo shutdown now
 ```
 ### 常用命令速查
-|操作|命令|
-|---|---|
-|启动所有服务|`docker compose up -d`|
-|停止所有服务|`docker compose stop`|
-|重启单个服务|`docker compose restart django`|
-|查看日志|`docker logs -f zhilian-django`|
-|进入容器|`docker exec -it zhilian-django bash`|
-|重新构建|`docker compose build --no-cache`|
-|查看状态|`docker compose ps`|
+| 操作     | 命令                                    |
+| ------ | ------------------------------------- |
+| 启动所有服务 | `docker compose up -d`                |
+| 停止所有服务 | `docker compose stop`                 |
+| 重启单个服务 | `docker compose restart django`       |
+| 查看日志   | `docker logs -f zhilian-django`       |
+| 进入容器   | `docker exec -it zhilian-django bash` |
+| 重新构建   | `docker compose build --no-cache`     |
+| 查看状态   | `docker compose ps`                   |
 # 个人部署docker流程和问题处理
 ## 1. 推送代码
 ```bash
@@ -130,4 +130,210 @@ git status 查看修改文件
 git add . 添加修改
 git commit -m "fix: 统一使用环境变量，修复以下问题" ## 提交
 git push origin main ## 推送到远程仓库
+```
+## 2. 先删除乌班图系统中的容器，网络和数据
+```bash
+cd ~/zhilian-platform
+docker compose down -v
+
+docker rmi zhilian-platform-django zhilian-platform-fastapi zhilian-platform-crawler zhilian-platform-frontend # 删除镜像
+
+git pull 拉取最新代码
+
+docker compose up -d --build 重新构建
+
+docker compose ps 查看状态
+
+# 查看三个后端的日志
+docker logs zhilian-django --tail 30
+docker logs zhilian-fastapi --tail 30
+docker logs zhilian-crawler --tail 30
+
+# 执行数据库迁移
+
+docker exec zhilian-django python manage.py migrate
+```
+
+## 遇到的困难
+```python
+# 解决 Django 5.0 + MariaDB 10.6 兼容性问题
+# 位置：settings.py 最末尾
+# 原因：Django 5.0 要求 MySQL 8.0+，但实际使用 MariaDB 10.6
+# 解决：禁用 Django 的数据库版本检查
+
+import django.db.backends.mysql.base
+django.db.backends.mysql.base.DatabaseWrapper.check_database_version_supported = lambda self: None
+
+
+fastapi的错误
+
+import pymysql
+pymysql.version_info = (8, 0, 0, 'final', 0)
+
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from .config import settings
+
+# 使用配置中的数据库地址
+DATABASE_URL = settings.DATABASE_URL
+
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,
+    connect_args={
+        "init_command": "SET sql_mode='STRICT_TRANS_TABLES'"
+    }
+)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+        
+
+docker容器内启动顺序，一定要做好健康检查第二启动顺序要先数据库
+  cat > docker-compose.yml << 'EOF'
+services:
+  mysql:
+    image: mariadb:10.6
+    container_name: zhilian-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: qazwsx@123
+      MYSQL_DATABASE: dingban_backend
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - zhilian-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pqazwsx@123"]
+      timeout: 20s
+      retries: 10
+      interval: 5s
+
+  redis:
+    image: redis:7-alpine
+    container_name: zhilian-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - zhilian-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      timeout: 20s
+      retries: 10
+      interval: 5s
+
+  django:
+    build: ./backend/django_react
+    container_name: zhilian-django
+    restart: unless-stopped
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: qazwsx@123
+      DB_NAME: dingban_backend
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/django_react:/app
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - zhilian-network
+    command: python manage.py runserver 0.0.0.0:8000
+
+  fastapi:
+    build: ./backend/FastAPIProject
+    container_name: zhilian-fastapi
+    restart: unless-stopped
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: qazwsx@123
+      DB_NAME: dingban_backend
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./backend/FastAPIProject:/app
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - zhilian-network
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
+
+  crawler:
+    build: ./backend/spiders
+    container_name: zhilian-crawler
+    restart: unless-stopped
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: qazwsx@123
+      DB_NAME: dingban_backend
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    volumes:
+      - ./backend/spiders:/app
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - zhilian-network
+    command: python app_main.py
+
+  frontend:
+    build: ./frontend/my-react-app
+    container_name: zhilian-frontend
+    restart: unless-stopped
+    environment:
+      VITE_DJANGO_HOST: 192.168.0.120
+      VITE_DJANGO_PORT: 8000
+      VITE_FASTAPI_HOST: 192.168.0.120
+      VITE_FASTAPI_PORT: 8001
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend/my-react-app:/app
+      - /app/node_modules
+    depends_on:
+      - django
+      - fastapi
+    networks:
+      - zhilian-network
+    command: npm run dev -- --host 0.0.0.0
+
+networks:
+  zhilian-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  redis_data:
+EOF     
 ```

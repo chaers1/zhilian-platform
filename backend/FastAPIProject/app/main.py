@@ -1,5 +1,4 @@
 ﻿import json
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routers import dashboard
@@ -16,8 +15,8 @@ app = FastAPI(
     debug=settings.DEBUG
 )
 
-# ✅ CORS 跨域配置 - 从环境变量读取
-origins_json = os.getenv("BACKEND_CORS_ORIGINS", '["http://localhost:5173"]')
+# CORS 跨域配置 - 从环境变量读取
+origins_json = os.getenv("BACKEND_CORS_ORIGINS", '["http://localhost:5173", "http://127.0.0.1:5173"]')
 try:
     origins = json.loads(origins_json)
 except Exception as e:
@@ -27,12 +26,13 @@ except Exception as e:
 # CORS 跨域配置
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=origins,  # 或者开发环境用 ["*"]
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=3600,
 )
-
 # 注册路由
 # =============================== 爬虫功能路由 ============================================================
 app.include_router(dashboard.router, prefix="/api/crawler/dashboard", tags=["Dashboard"])
@@ -48,3 +48,8 @@ async def root():
 @app.get("/health")
 async def health():
     return {"status": "ok"}
+
+# 添加 OPTIONS 预检请求处理
+@app.options("/{rest_of_path:path}")
+async def options_handler():
+    return {}

@@ -215,13 +215,100 @@
 }
 
 /* ========== 历史记录 ========== */
-.history-item {
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+.history-section {
+  margin-top: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(102, 126, 234, 0.15);
+  border-radius: 12px;
+  padding: 15px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.history-user-info {
   font-size: 12px;
+  color: #667eea;
+  margin-left: 10px;
+  font-weight: normal;
+}
+
+.history-item {
+  padding: 15px;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+  font-size: 13px;
+  transition: background-color 0.2s;
+  background: rgba(255, 255, 255, 0.01);
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.history-item:hover {
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.history-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.history-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.history-row:last-child {
+  margin-bottom: 0;
+}
+
+.history-field {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.field-label {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.field-value {
+  color: #fff;
+  font-size: 13px;
+}
+
+.status-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.error-count {
+  color: #ef4444;
+  font-weight: 500;
+}
+
+.history-user-row {
+  justify-content: flex-end;
+  padding-top: 5px;
+  border-top: 1px dashed rgba(102, 126, 234, 0.1);
+  margin-top: 8px;
+}
+
+.history-user {
+  color: #667eea;
+  font-size: 12px;
 }
 
 /* ========== 标签内容区域 ========== */
@@ -316,36 +403,4 @@
   .stat-value {
     font-size: 24px;
   }
-}
-
-/* ========== 抓取数据搜索栏 ========== */
-.search-bar {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-.search-input {
-  flex: 1;
-  padding: 10px 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(102, 126, 234, 0.2);
-  border-radius: 10px;
-  color: #fff;
-  font-size: 13px;
-}
-
-.search-select {
-  padding: 10px 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(102, 126, 234, 0.2);
-  border-radius: 10px;
-  color: #fff;
-  cursor: pointer;
-}
-
-.btn-export {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  color: white;
 }

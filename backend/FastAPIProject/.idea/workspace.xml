@@ -6,8 +6,33 @@
   <component name="ChangeListManager">
     <list default="true" id="e37ccaf5-9892-4e73-a837-6460e7665094" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/dependencies.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../spiders/orchestrator.py" beforeDir="false" afterPath="$PROJECT_DIR$/../spiders/orchestrator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/redis_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/redis_config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/dashboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/dashboard.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../django_react/apps/crawler/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/../django_react/apps/crawler/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../django_react/apps/crawler/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/../django_react/apps/crawler/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../django_react/apps/crawler/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/../django_react/apps/crawler/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../django_react/apps/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/../django_react/apps/users/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../django_react/django_react/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/../django_react/django_react/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../django_react/media/avatars/avatar_11_7c9b02d3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../spiders/cqc_ssr1.py" beforeDir="false" afterPath="$PROJECT_DIR$/../spiders/cqc_ssr1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../docs/智联平台综页面文档/.obsidian/workspace.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../docs/智联平台综页面文档/.obsidian/workspace.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../docs/智联平台综页面文档/docker部署成功总结.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../docs/智联平台综页面文档/docker部署成功总结.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../docs/智联平台综页面文档/智联平台 - 后端Django.md.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../docs/智联平台综页面文档/智联平台 - 后端Django.md.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/my-react-app/.env" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/my-react-app/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/my-react-app/src/api/auth.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/my-react-app/src/api/auth.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/my-react-app/src/api/request.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/my-react-app/src/api/request.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/my-react-app/src/pages/WebCrawler/WebCrawler.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/my-react-app/src/pages/WebCrawler/WebCrawler.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/my-react-app/src/pages/WebCrawler/components/Crawler/AnalysisTab.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/my-react-app/src/pages/WebCrawler/components/Crawler/AnalysisTab.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/my-react-app/src/pages/WebCrawler/components/Crawler/Crawler.css" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/my-react-app/src/pages/WebCrawler/components/Crawler/Crawler.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/my-react-app/src/pages/WebCrawler/components/Crawler/Crawler.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/my-react-app/src/pages/WebCrawler/components/Crawler/Crawler.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/my-react-app/src/pages/WebCrawler/components/Crawler/DataTab.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/my-react-app/src/pages/WebCrawler/components/Crawler/MonitorTab.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/my-react-app/src/pages/WebCrawler/components/Crawler/MonitorTab.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/my-react-app/src/pages/WebCrawler/components/Sidebar/Sidebar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/my-react-app/src/pages/WebCrawler/components/Sidebar/Sidebar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/my-react-app/vite.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/my-react-app/vite.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -98,7 +123,22 @@
       <workItem from="1780154238374" duration="1460000" />
       <workItem from="1780194282908" duration="2132000" />
       <workItem from="1780322049817" duration="1014000" />
-      <workItem from="1780364357918" duration="1823000" />
+      <workItem from="1780364357918" duration="5819000" />
+      <workItem from="1780452036953" duration="2722000" />
+      <workItem from="1780471573460" duration="997000" />
+      <workItem from="1780472970101" duration="6208000" />
+      <workItem from="1780535295223" duration="616000" />
+      <workItem from="1780554191699" duration="4976000" />
+      <workItem from="1780576816586" duration="3928000" />
+      <workItem from="1780621483478" duration="7244000" />
+      <workItem from="1780717654585" duration="7483000" />
+      <workItem from="1780796587442" duration="14720000" />
+      <workItem from="1780890161110" duration="11968000" />
+      <workItem from="1780928564920" duration="316000" />
+      <workItem from="1780986309207" duration="9256000" />
+      <workItem from="1781059183422" duration="7998000" />
+      <workItem from="1781071891845" duration="6035000" />
+      <workItem from="1781086180477" duration="581000" />
     </task>
     <servers />
   </component>

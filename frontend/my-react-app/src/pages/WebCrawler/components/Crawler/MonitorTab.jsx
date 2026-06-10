@@ -2,12 +2,12 @@
  * MonitorTab.jsx - 运行监控标签页
  */
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import { useState } from 'react';
-import { controlSpider } from '../../../../api/auth'
+import { useState, useEffect } from 'react';
+import { controlSpider, getSpiderHistory } from '../../../../api/auth'
 
 // 直接接收父组件计算好的 runTime！
 export const MonitorTab = ({ crawlerName, spiderType, currentStatus,
-    onStatusChange, runTime, startTime, currentCount, totalExpected, progressPercent, logs }) => {
+    onStatusChange, runTime, startTime, currentCount, totalExpected, logs }) => {
 
     /**
      * 状态标签
@@ -23,6 +23,26 @@ export const MonitorTab = ({ crawlerName, spiderType, currentStatus,
     // 直接使用来自父组件的状态
     const status = currentStatus || 'idle';
     const [loading, setLoading] = useState(false);
+    const [historyRecords, setHistoryRecords] = useState([]);
+    const [isRefreshing, setIsRefreshing] = useState(false);
+
+    // 获取当前用户信息
+    const [userInfo, setUserInfo] = useState(null);
+    useEffect(() => {
+        const userData = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo');
+        if (userData) {
+            try {
+                const parsed = JSON.parse(userData);
+                // 兼容不同的字段名，可能是 username 或 name
+                setUserInfo({
+                    ...parsed,
+                    displayName: parsed.username || parsed.name || parsed.email
+                });
+            } catch (e) {
+                console.error('解析用户信息失败', e);
+            }
+        }
+    }, []);
 
     // 格式化启动时间
     const formatStartTime = (timestamp) => {
@@ -34,6 +54,28 @@ export const MonitorTab = ({ crawlerName, spiderType, currentStatus,
         return `${hours}:${minutes}:${seconds}`;
     };
     const displayStartTime = formatStartTime(startTime);
+
+    // 刷新历史记录
+    const handleRefreshHistory = async () => {
+        setIsRefreshing(true);
+        try {
+            const result = await getSpiderHistory();
+            console.log('获取历史记录结果:', result);
+            if (result.code === 200) {
+                console.log('设置历史记录数据:', result.data);
+                setHistoryRecords(result.data);
+            }
+        } catch (error) {
+            console.error('刷新历史记录失败:', error);
+        } finally {
+            setIsRefreshing(false);
+        }
+    };
+
+    // 初始化加载历史记录
+    useEffect(() => {
+        handleRefreshHistory();
+    }, [spiderType]);
 
     // 启动爬虫函数
     const handleStart = async () => {
@@ -209,18 +251,87 @@ export const MonitorTab = ({ crawlerName, spiderType, currentStatus,
 
             {/* 历史记录 */}
             <div className='history-section'>
-                <div className='chart-title'>
-                    <i className='fas fa-history'></i>
-                    历史运行记录
+                <div className='history-header'>
+                    <div className='chart-title'>
+                        <i className='fas fa-history'></i>
+                        历史运行记录
+                        {userInfo && (
+                            <span className='history-user-info'>
+                                {userInfo.displayName} ({userInfo.email})
+                            </span>
+                        )}
+                    </div>
+                    <button className={`btn btn-refresh ${isRefreshing ? 'refreshing' : ''}`}
+                        onClick={handleRefreshHistory}
+                        disabled={isRefreshing}
+                        title='刷新历史运行记录'>
+                        <i className={`fas fa-sync-alt ${isRefreshing ? 'spinning' : ''}`}></i>
+                    </button>
                 </div>
-                <div className='history-item'>
-                    <span className='history-time'>03-31 14:30</span>
-                    <span>🔄 running</span>
+                {/* 调试信息 */}
+                <div style={{ color: '#667eea', marginBottom: '10px', fontSize: '12px' }}>
+                    历史记录数量: {historyRecords.length}
                 </div>
-                <div className='history-item'>
-                    <span className='history-time'>03-31 08:00</span>
-                    <span>✅ success 抓取 198 条 5分23秒</span>
-                </div>
+                {historyRecords.length > 0 ? (
+                    historyRecords.map((record, index) => (
+                        <div key={record.id || index} className='history-item'>
+                            <div className='history-row'>
+                                <span className='history-field'>
+                                    <span className='field-label'>任务ID：</span>
+                                    <span className='field-value'>{record.id}</span>
+                                </span>
+                                <span className='history-field'>
+                                    <span className='field-label'>启动时间：</span>
+                                    <span className='field-value'>{record.start_time}</span>
+                                </span>
+                                <span className='history-field'>
+                                    <span className='field-label'>结束时间：</span>
+                                    <span className='field-value'>{record.end_time}</span>
+                                </span>
+                                <span className='history-field'>
+                                    <span className='field-label'>任务状态：</span>
+                                    <span className='field-value status-badge'>
+                                        {record.status === 'completed' ? '✅ 已完成' :
+                                            record.status === 'running' ? '🔄 运行中' : '❌ 手动停止'}
+                                    </span>
+                                </span>
+                            </div>
+                            <div className='history-row'>
+                                <span className='history-field'>
+                                    <span className='field-label'>数据类别：</span>
+                                    <span className='field-value'>{record.spider_type}</span>
+                                </span>
+                                <span className='history-field'>
+                                    <span className='field-label'>来源：</span>
+                                    <span className='field-value'>{record.source}</span>
+                                </span>
+                            </div>
+                            <div className='history-row'>
+                                <span className='history-field'>
+                                    <span className='field-label'>抓取数量：</span>
+                                    <span className='field-value'>{record.items_count}/{record.total_expected}</span>
+                                </span>
+                                <span className='history-field'>
+                                    <span className='field-label'>任务运行时长：</span>
+                                    <span className='field-value'>{record.duration}</span>
+                                </span>
+                                <span className='history-field'>
+                                    <span className='field-label'>异常：</span>
+                                    <span className='field-value error-count'>{record.error_count}</span>
+                                </span>
+                            </div>
+                            {userInfo && (
+                                <div className='history-row history-user-row'>
+                                    <span className='history-user'>{userInfo.displayName}</span>
+                                </div>
+                            )}
+                        </div>
+                    ))
+                ) : (
+                    <div className='history-item'>
+                        <span className='log-info'>暂无历史记录</span>
+                    </div>
+                )}
             </div>
         </div>
     );

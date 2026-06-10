@@ -1,3 +1,4 @@
+
 # 一 项目搭建流程
 ## 1. 创建django项目
 
@@ -144,7 +145,7 @@ RPUSH spider:commands "movie:stop"
 exit
 django:python manage.py runserver
 npm run dev
-uvicorn app.main:app --reload --port 8001
+uvicorn app.main:app --reload --port 8081
 ```
 # 二 Users应用开发
 ## 配置

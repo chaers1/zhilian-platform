@@ -1,4 +1,5 @@
 import os
+import time
 import traceback
 import uuid
 from asgiref.sync import sync_to_async
@@ -143,6 +144,8 @@ class UserLoginView(APIViewBase):
             avatar_url =  f"{settings.MEDIA_URL}{user_data.get('avatar')}" if user_data.get('avatar') else ''
             print("avatar_url:%s" % avatar_url)
             print("avatarr:%s" % user_data.get('avatar'))
+            print("user_data 类型检查:", {k: type(v).__name__ for k, v in user_data.items()})
+
             # 登录成功
             return JsonResponse({
                 'code': 200,
@@ -165,7 +168,8 @@ class UserLoginView(APIViewBase):
             }, status=400)
 
         except Exception as e:
-
+            print(f"avatar_url type: {type(avatar_url)}")
+            print(f"avatar_url value: {avatar_url}")
             logger.error(f'登录接口异常{str(e)}')
             return JsonResponse({
                 'code': 500,
